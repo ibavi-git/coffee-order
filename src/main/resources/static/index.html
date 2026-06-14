@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Coffee Shop | Kaapi Kadai</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6f4e37;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            color: #444;
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* simple container */
+        .wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* menu list - clean like original */
+        .menu-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 5px 0;
+        }
+
+        .menu-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-box li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .menu-box li:last-child {
+            border-bottom: none;
+        }
+
+        /* form - exactly like original but centered */
+        form {
+            background: white;
+            padding: 20px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 95%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #6f4e37;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background-color: #5a3d2b;
+        }
+
+        /* order list */
+        .order-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+            width: 100%;
+            padding: 5px 0;
+        }
+
+        .order-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .order-box li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .order-box li:last-child {
+            border-bottom: none;
+        }
+
+        /* simple text center */
+        .text-center {
+            text-align: center;
+        }
+
+        hr {
+            margin: 15px 0;
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>☕ Kaapi Kadai</h1>
+
+    <div class="menu-box">
+        <h2 style="margin: 10px 0 5px 0;">Menu</h2>
+        <ul>
+            <li>Espresso - ₹120</li>
+            <li>Cappuccino - ₹150</li>
+            <li>Latte - ₹180</li>
+            <li>Mocha - ₹200</li>
+        </ul>
+    </div>
+
+    <h2>Place Your Order</h2>
+
+    <form id="coffeeForm">
+        Name:
+        <input type="text" id="name" placeholder="Enter your name">
+        <br><br>
+        Coffee:
+        <input type="text" id="coffee" placeholder="Enter coffee type">
+        <br><br>
+        Quantity:
+        <input type="number" id="quantity" value="1">
+        <br><br>
+        <button type="submit">Order Now</button>
+    </form>
+
+    <div class="order-box">
+        <ul id="orderList"></ul>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("coffeeForm");
+    const list = document.getElementById("orderList");
+
+    fetch("/coffee")
+        .then(res => res.json())
+        .then(data => data.forEach(o => addOrder(o)));
+
+    form.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const order = {
+            name: document.getElementById("name").value,
+            coffee: document.getElementById("coffee").value,
+            quantity: document.getElementById("quantity").value
+        };
+
+        fetch("/coffee", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(order)
+        })
+            .then(res => res.json())
+            .then(o => addOrder(o));
+
+        form.reset();
+    });
+
+    function addOrder(order){
+        const li = document.createElement("li");
+        li.textContent =
+            order.name + " ordered " +
+            order.quantity + " " +
+            order.coffee;
+        list.appendChild(li);
+    }
+</script>
+
+</body>
+</html>
